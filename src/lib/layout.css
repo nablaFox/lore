@@ -1,0 +1,19 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-bg: #fdfbf5;
+  --color-fg: #2c2417;
+  --color-muted: #8a7e6b;
+  --color-accent: #a16207;
+  --color-border: #d4cabb;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+  font-family: 'Source Serif 4', Georgia, serif;
+}
+
+button {
+  cursor: pointer;
+}
