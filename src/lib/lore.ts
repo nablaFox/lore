@@ -5,8 +5,11 @@ import katex from 'katex'
 
 interface Section {
   title: string
+  rtime: number
   body: Token[]
 }
+
+const WPM = 200
 
 export function lore(): PreprocessorGroup {
   return {
@@ -28,8 +31,8 @@ export function lore(): PreprocessorGroup {
         author: frontmatter.author ?? '',
         title,
         github,
-        rtime: 3,
-        sections: sections.map(s => ({ title: s.title, rtime: 1 }))
+        rtime: sections.reduce((sum, s) => sum + s.rtime, 0),
+        sections: sections.map(s => ({ title: s.title, rtime: s.rtime }))
       }
 
       const sectionSnippets = sections
@@ -39,7 +42,7 @@ export function lore(): PreprocessorGroup {
       return {
         code: `
 <script>
-  import MdLayout from 'lore/MdLayout.svelte'
+  import MdLayout from 'lore-kit/MdLayout.svelte'
   ${userScript}
   const __props = ${JSON.stringify(props)}
 </script>
@@ -87,6 +90,29 @@ function renderLatex(text: string) {
     .join('')
 }
 
+function estimateReadTime(tokens: Token[]): number {
+  return tokens.reduce((words, token) => {
+    const textWords = (() => {
+      if (!('text' in token)) return 0
+      const count = (token as any).text.split(/\s+/).length
+      return token.type === 'code' ? count * 0.5 : count
+    })()
+
+    const childWords = (() => {
+      if (!('tokens' in token) || !Array.isArray((token as any).tokens)) return 0
+      return estimateReadTime((token as any).tokens)
+    })()
+
+    const itemWords = (() => {
+      if (!('items' in token) || !Array.isArray((token as any).items)) return 0
+      return (token as any).items.reduce((sum: number, item: any) =>
+        sum + (item.tokens ? estimateReadTime(item.tokens) : 0), 0)
+    })()
+
+    return words + textWords + childWords + itemWords
+  }, 0)
+}
+
 function extractStructure(tokens: Token[], github: string) {
   const h1 = tokens.findIndex(t => t.type === 'heading' && t.depth === 1)
   const title = h1 !== -1 ? (tokens[h1] as any).text as string : 'Untitled'
@@ -103,9 +129,12 @@ function extractStructure(tokens: Token[], github: string) {
   const sections: Section[] = h2Indices.map((start, i) => {
     const end = h2Indices[i + 1] ?? tokens.length
 
+    const body = tokens.slice(start + 1, end)
+
     return {
       title: (tokens[start] as any).text as string,
-      body: tokens.slice(start + 1, end)
+      body,
+      rtime: Math.max(1, Math.round(estimateReadTime(body) / WPM))
     }
   })
 

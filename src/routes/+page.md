@@ -12,13 +12,13 @@ Write svelte pages in markdown and get elegant web docs.
 First install the plugin:
 
 ```sh
-npm install lore
+npm install lore-kit
 ```
 
 then, in `svelte.config.js`, update `preprocessors` and `extensions` fields:
 
 ```js
-import { lore } from 'lore'
+import { lore } from 'lore-kit'
 
 export const config = {
   preprocess: [lore()],
@@ -29,9 +29,9 @@ export const config = {
 and in the root css of your project, i.e. `app.css`, import the plugin styles:
 
 ```app.css
-@import 'tailwindcss'; /* no need to install tailwind, is a peer dependency of lore */
-@import 'lore/layout.css';
-@source "../node_modules/lore/dist";
+@import 'tailwindcss'; /* tailwind comes with lore */
+@import 'lore-kit/layout.css';
+@source "../node_modules/lore-kit/dist";
 ```
 
 ## Usage

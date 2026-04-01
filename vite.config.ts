@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [sveltekit(), tailwindcss()],
   resolve: {
     alias: {
-      'lore/MdLayout.svelte': path.resolve('./src/lib/MdLayout.svelte')
+      'lore-kit/MdLayout.svelte': path.resolve('./src/lib/MdLayout.svelte')
     }
   }
 })

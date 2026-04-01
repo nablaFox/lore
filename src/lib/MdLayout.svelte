@@ -22,27 +22,25 @@
 
 	let current = $state(0)
 
-	onMount(() => {
-		const observer = new IntersectionObserver(
-			(entries) => {
-				for (const entry of entries) {
-					if (entry.isIntersecting) {
-						const index = sections.findIndex((s) => s.title.toLowerCase() === entry.target.id)
-						if (index !== -1) current = index
-					}
-				}
-			},
-			{ rootMargin: '-20% 0px -60% 0px' }
-		)
+  onMount(() => {
+    const THRESHOLD = window.innerHeight * 0.3
 
-		for (const { title } of sections) {
-			const el = document.getElementById(title.toLowerCase())
+    const update = () => {
+      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4
+      if (atBottom) { current = sections.length - 1; return }
 
-			if (el) observer.observe(el)
-		}
+      let idx = 0
+      for (let i = 0; i < sections.length; i++) {
+        const el = document.getElementById(sections[i].title.toLowerCase())
+        if (el && el.getBoundingClientRect().top <= THRESHOLD) idx = i
+      }
+      current = idx
+    }
 
-		return () => observer.disconnect()
-	})
+    update()
+    window.addEventListener('scroll', update, { passive: true })
+    return () => window.removeEventListener('scroll', update)
+  })
 </script>
 
 <svelte:head>
@@ -125,9 +123,17 @@
       {/if}
     </header>
 
-    <main class="pb-40">
-      {#each sections as { title, rtime }, i (i)}
-        <h2 class="mb-4 font-bold text-2xl">{title}</h2>
+    <main>
+      {#each sections as { title }, i (i)}
+        <h2 class="mb-4 font-bold text-2xl relative group">
+          <a 
+            href="#{title.toLowerCase()}" 
+            class="md:absolute md:-left-5 md:opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+          >
+            #
+          </a>
+          {title}
+        </h2>
 
         <section id={title.toLowerCase()} class="not-last:mb-5 scroll-mt-16">
           {@render (rest[`section_${i}`] as Snippet | undefined)?.()}
