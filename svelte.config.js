@@ -1,4 +1,4 @@
-import adapter from '@sveltejs/adapter-auto'
+import adapter from '@sveltejs/adapter-static'
 import { relative, sep } from 'node:path'
 import { lore } from './src/lib/lore.ts'
 
@@ -14,7 +14,16 @@ const config = {
     }
   },
   kit: {
-    adapter: adapter()
+    adapter: adapter({
+      pages: 'docs',
+      assets: 'docs',
+      fallback: null,
+      precompress: false
+    }),
+
+    paths: {
+      base: '/lore'
+    }
   },
   preprocess: [lore()],
   extensions: ['.svelte', '.md']

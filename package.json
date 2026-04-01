@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build && npm run prepack",
+    "build:docs": "vite build",
     "preview": "vite preview",
     "prepare": "svelte-kit sync || echo ''",
     "prepack": "svelte-kit sync && svelte-package && publint",
@@ -66,6 +67,7 @@
     "svelte"
   ],
   "dependencies": {
+    "@sveltejs/adapter-static": "^3.0.10",
     "gray-matter": "^4.0.3",
     "katex": "^0.16.44",
     "marked": "^17.0.5"

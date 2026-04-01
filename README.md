@@ -1,8 +1,8 @@
 # Lore
 
-Write svelte pages with markdown and get elegant web docs.
+Write svelte pages in markdown and get elegant web docs.
 
-![screenshot](./screenshot.png)
+> This very page is built with lore, see it live [nablafox.github.io/lore](https://nablafox.github.io/lore/)
 
 ## Installation
 
@@ -26,12 +26,10 @@ export const config = {
 and in the root css of your project, i.e. `app.css`, import the plugin styles:
 
 ```app.css
-@import 'tailwindcss';
+@import 'tailwindcss'; /* no need to install tailwind, is a peer dependency of lore */
 @import 'lore/layout.css';
 @source "../node_modules/lore/dist";
 ```
-
-tailwindcss will be automatically installed as a peer dependency.
 
 ## Usage
 
